@@ -10,7 +10,7 @@ from src import db
 customers = Blueprint('customers', __name__)
 
 # Get all customers from the DB
-@customers.route('/customers', methods=['PUT'])
+@customers.route('/customers', methods=['GET']) 
 def get_customers():
     cursor = db.get_db().cursor()
     cursor.execute('select company, last_name,\
