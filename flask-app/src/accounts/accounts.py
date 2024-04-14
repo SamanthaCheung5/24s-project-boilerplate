@@ -9,7 +9,7 @@ from src import db
 accounts = Blueprint('accounts', __name__)
 
 # add a new retirement transaction 
-@app.route('/retirement_transaction/<int:account_num>', methods=['POST'])
+@accounts.route('/retirement_transaction/<int:account_num>', methods=['POST'])
 def add_new_retirement_transaction(account_num):
 
     # Collecting data from the request object
@@ -37,7 +37,7 @@ def add_new_retirement_transaction(account_num):
 ########################################################
 
 # Update instrument information for a specific instrumentID (PUT request)
-@app.route('/instruments/<int:instrumentID>', methods=['PUT'])
+@accounts.route('/instruments/<int:instrumentID>', methods=['PUT'])
 def update_instrument(instrumentID):
     # Collecting data from the request object
     the_data = request.json
@@ -63,7 +63,7 @@ def update_instrument(instrumentID):
 ########################################################
 
 # Delete instrument information for a specific instrumentID (DELETE request)
-@app.route('/instruments/<int:instrumentID>', methods=['DELETE'])
+@accounts.route('/instruments/<int:instrumentID>', methods=['DELETE'])
 def delete_instrument(instrumentID):
     # Constructing the query for deleting instrument information
     query = 'DELETE FROM instruments WHERE instrument_ID = {}'.format(instrumentID)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 ########################################################
 
 # Get all trade information for a particular account
-@app.route('/trades/<int:accountNum>', methods=['GET'])
+@accounts.route('/trades/<int:accountNum>', methods=['GET'])
 def get_trades(accountNum):
     # Constructing the query to retrieve trade information for the specified account number
     query = 'SELECT * FROM trades WHERE accountNum = {}'.format(accountNum)
@@ -98,7 +98,7 @@ def get_trades(accountNum):
 ########################################################
 
 # Add information of a trade that took place, reflecting the transaction that occurred
-@app.route('/trades', methods=['POST'])
+@accounts.route('/trades', methods=['POST'])
 def add_new_trade():
     # Collecting data from the request object
     the_data = request.json
@@ -128,7 +128,7 @@ def add_new_trade():
 ########################################################
 
 # Return all account information for a particular user
-@app.route('/accounts/<int:id>', methods=['GET'])
+@accounts.route('/accounts/<int:id>', methods=['GET'])
 def get_accounts(id):
     # Constructing the query to retrieve account information for the specified user ID
     query = 'SELECT * FROM accounts WHERE userID = {}'.format(id)
