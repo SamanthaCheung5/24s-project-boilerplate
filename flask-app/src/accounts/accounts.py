@@ -1,7 +1,7 @@
 ########################################################
 # Sample accounts blueprint of endpoints
 ########################################################
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, current_app
 import json
 from src import db
 
