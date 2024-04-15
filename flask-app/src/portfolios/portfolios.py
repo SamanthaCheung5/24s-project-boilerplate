@@ -56,36 +56,36 @@ def get_performance_indicator(indicator_ID):
         SELECT * FROM performance_indicators WHERE indicatorID = %s;
     """
     cursor.execute(query, (indicator_ID,))
-    row_headers = [x[0] for x in cursor.description]  
-    result = cursor.fetchone()
+    row_headers = [x[0] for x in cursor.description]
+    result = cursor.fetchall()  # Changed from fetchone to fetchall to get a list of results
     cursor.close()
 
-    if result:
-        json_data = dict(zip(row_headers, result))
-        response = make_response(jsonify(json_data), 200)
+    json_data = []
+    for row in result:
+        json_data.append(dict(zip(row_headers, row)))
+
+    if json_data:
+        response = make_response(jsonify(json_data), 200)  # Sends a list of dictionaries
     else:
         response = make_response(jsonify({"error": "Performance indicator not found"}), 404)
-    
+
     response.mimetype = 'application/json'
     return response
 
 # Return all investment information for a particular InvestmentID
 @portfolios.route('/investments/<int:investmentID>', methods=['GET'])
 def get_investment(investmentID):
-    cursor = db.get_db().cursor()
-    cursor.execute("SELECT * FROM investments WHERE investmentID = %s;", (investmentID,))
-    row_headers = [x[0] for x in cursor.description]
-    result = cursor.fetchone()
-    cursor.close()
-
-    if result:
-        json_data = dict(zip(row_headers, result))
-        response = make_response(jsonify(json_data), 200)
-    else:
-        response = make_response(jsonify({"error": "Investment not found"}), 404)
-    
-    response.mimetype = 'application/json'
-    return response
+   cursor = db.get_db().cursor()
+   cursor.execute('SELECT * FROM investments WHERE investmentID = %s', (investmentID,))
+   row_headers = [x[0] for x in cursor.description]
+   json_data =[]
+   userData = cursor.fetchall()
+   for row in userData:
+       json_data.append(dict(zip(row_headers, row)))
+   user_response = make_response(jsonify(json_data))
+   user_response.status_code = 200
+   user_response.mimetype = 'application/json'
+   return user_response
 
 # Add information of a particular investment reflecting the transaction that occurred
 @portfolios.route('/investments', methods=['POST']) 
@@ -118,17 +118,20 @@ def delete_investment(investmentID):
     else:
         return jsonify({"error": "Investment not found"}), 404
 
-# Return all transactions for a particular account number
-@portfolios.route('/investment_transactions/<accountNum>', methods=['GET']) 
-def get_transactions(accountNum):
-    cursor = db.get_db().cursor()
-    cursor.execute("SELECT * FROM investment_transaction WHERE AccountNum = %s;", (accountNum,))
-    row_headers = [x[0] for x in cursor.description]
-    results = cursor.fetchall()
-    cursor.close()
-
-    json_data = [dict(zip(row_headers, result)) for result in results]
-    return make_response(jsonify(json_data), 200 if results else 404)
+# Return all transactions for a particular investment
+@portfolios.route('/investment_transaction/<InvestmentID>', methods=['GET']) 
+def get_transactions(InvestmentID):
+   cursor = db.get_db().cursor()
+   cursor.execute('SELECT * FROM investment_transaction WHERE InvestmentID = %s', (InvestmentID,))
+   row_headers = [x[0] for x in cursor.description]
+   json_data =[]
+   userData = cursor.fetchall()
+   for row in userData:
+       json_data.append(dict(zip(row_headers, row)))
+   user_response = make_response(jsonify(json_data))
+   user_response.status_code = 200
+   user_response.mimetype = 'application/json'
+   return user_response
 
 # Update transaction information in the system
 @portfolios.route('/investment_transactions/<int:transactionID>', methods=['PUT'])  
