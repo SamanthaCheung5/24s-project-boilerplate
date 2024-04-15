@@ -1,7 +1,7 @@
 ########################################################
 # Sample accounts blueprint of endpoints
 ########################################################
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, make_response 
 import json
 from src import db
 
@@ -83,26 +83,17 @@ if __name__ == '__main__':
 # Get all trade information for a particular account
 @accounts.route('/trades/<int:accountNum>', methods=['GET'])
 def get_trades(accountNum):
-    # Constructing the query to retrieve trade information for the specified account number
-    query = 'SELECT * FROM trades WHERE accountNum = {}'.format(accountNum)
-    current_app.logger.info(query)
-
-    # Executing the query
     cursor = db.get_db().cursor()
-    cursor.execute(query)
-    
-    # Fetching column headers
-    column_headers = [x[0] for x in cursor.description]
-
-    # Fetching trade records
-    trades = cursor.fetchall()
-    
-    # Creating JSON data
+    cursor.execute('SELECT * FROM trades WHERE accountNum = %s', (accountNum,))
+    row_headers = [x[0] for x in cursor.description]
     json_data = []
-    for trade in trades:
-        json_data.append(dict(zip(column_headers, trade)))
-
-    return jsonify(json_data)
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
 
 ########################################################
 
@@ -137,18 +128,19 @@ def add_new_trade():
 ########################################################
 
 # Return all account information for a particular user
-@accounts.route('/accounts/<int:id>', methods=['GET'])
-def get_accounts(id):
-    # Constructing the query to retrieve account information for the specified user ID
-    query = 'SELECT * FROM accounts WHERE userID = {}'.format(id)
-    current_app.logger.info(query)
-
-    # Executing the query
+@accounts.route('/accounts/<int:userID>', methods=['GET'])
+def get_accounts(userID):
     cursor = db.get_db().cursor()
-    cursor.execute(query)
-    accounts = cursor.fetchall()
-
-    return jsonify(accounts)
+    cursor.execute('SELECT * FROM accounts WHERE userID = %s', (userID,))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
 
 if __name__ == '__main__':
-    app.run(debug=True)   
+    app.run(debug=True)
