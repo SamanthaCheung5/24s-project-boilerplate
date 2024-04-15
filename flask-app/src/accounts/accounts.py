@@ -80,7 +80,6 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 ########################################################
-
 # Get all trade information for a particular account
 @accounts.route('/trades/<int:accountNum>', methods=['GET'])
 def get_trades(accountNum):
@@ -91,9 +90,19 @@ def get_trades(accountNum):
     # Executing the query
     cursor = db.get_db().cursor()
     cursor.execute(query)
-    trades = cursor.fetchall()
+    
+    # Fetching column headers
+    column_headers = [x[0] for x in cursor.description]
 
-    return jsonify(trades)
+    # Fetching trade records
+    trades = cursor.fetchall()
+    
+    # Creating JSON data
+    json_data = []
+    for trade in trades:
+        json_data.append(dict(zip(column_headers, trade)))
+
+    return jsonify(json_data)
 
 ########################################################
 
