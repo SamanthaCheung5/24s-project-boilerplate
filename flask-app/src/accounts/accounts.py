@@ -14,22 +14,17 @@ def add_new_retirement_transaction(account_num):
 
     # Collecting data from the request object
     the_data = request.json
-    current_app.logger.info(the_data)
 
     # Extracting the variables
     transaction_type = the_data['transaction_type']
     amount = the_data['amount']
 
-    # Constructing the query
-    query = 'INSERT INTO retirement_transaction (account_num, transaction_type, amount) VALUES ('
-    query += str(account_num) + ', "'
-    query += transaction_type + '", '
-    query += str(amount) + ')'
-    current_app.logger.info(query)
+    # Constructing the query with placeholders
+    query = 'INSERT INTO retirement_transaction (account_num, transaction_type, amount) VALUES (%s, %s, %s)'
 
-    # Executing and committing the insert statement
+    # Executing and committing the insert statement with parameters
     cursor = db.get_db().cursor()
-    cursor.execute(query)
+    cursor.execute(query, (account_num, transaction_type, amount))
     db.get_db().commit()
 
     return 'Success!'
@@ -101,6 +96,23 @@ def get_trades(accountNum):
 def get_account_ids():
     cursor = db.get_db().cursor()
     cursor.execute('SELECT DISTINCT accountNum FROM trades')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
+# Get information retirement account transaction for an account
+@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
+def get_retirement_transaction(account_num):
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s', (account_num,))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
