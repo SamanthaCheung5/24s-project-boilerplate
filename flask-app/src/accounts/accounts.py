@@ -3,7 +3,7 @@
 ########################################################
 from flask import Blueprint, request, jsonify, current_app, make_response 
 import json
-from src import db
+from src import db 
 
 
 accounts = Blueprint('accounts', __name__)
@@ -60,20 +60,6 @@ def update_instrument(instrumentID):
 
     return 'Instrument information updated successfully!'
 
-# Get instrument information for a specific instrumentID (GET)
-@accounts.route('/instruments/<int:instrumentID>', methods=['GET'])
-def get_instruments(instrumentID):
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM accounts WHERE userID = %s', (userID,))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    userData = cursor.fetchall()
-    for row in userData:
-        json_data.append(dict(zip(row_headers, row)))
-    user_response = make_response(jsonify(json_data))
-    user_response.status_code = 200
-    user_response.mimetype = 'application/json'
-    return user_response
 ########################################################
 
 # Delete instrument information for a specific instrumentID (DELETE request)
@@ -105,6 +91,18 @@ def get_trades(accountNum):
     for row in userData:
         json_data.append(dict(zip(row_headers, row)))
     user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
+# Get a list of all accountID numbers
+@accounts.route('/accounts', methods=['GET'])
+def get_account_ids():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT accountNum FROM trades')
+    account_ids = [row[0] for row in cursor.fetchall()]
+    user_response = make_response(jsonify(account_ids))
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
