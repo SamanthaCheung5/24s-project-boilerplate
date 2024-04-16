@@ -117,7 +117,7 @@ def get_account_ids():
 @accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
 def get_retirement_transaction(account_num):
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s')
+    cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s', (account_num,))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
