@@ -132,7 +132,7 @@ def get_retirement_transaction_info():
 ########################################################
 # Get information retirement account transaction for an account
 @accounts.route('/retirement_transaction/<int:accountNum>', methods=['GET'])
-def get_retirement_transaction_info():
+def get_retirement_transaction():
     cursor = db.get_db().cursor()
     cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s')
     row_headers = [x[0] for x in cursor.description]
