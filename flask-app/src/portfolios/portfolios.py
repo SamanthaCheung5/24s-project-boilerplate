@@ -82,19 +82,17 @@ def get_performance_indicator(indicator_ID):
     return response
 
 # Return all investment information for a particular InvestmentID
-@portfolios.route('/investments/<int:investmentID>', methods=['GET'])
-def get_investment(investmentID):
-   cursor = db.get_db().cursor()
-   cursor.execute('SELECT * FROM investments WHERE investmentID = %s', (investmentID,))
-   row_headers = [x[0] for x in cursor.description]
-   json_data =[]
-   userData = cursor.fetchall()
-   for row in userData:
-       json_data.append(dict(zip(row_headers, row)))
-   user_response = make_response(jsonify(json_data[0]))
-   user_response.status_code = 200
-   user_response.mimetype = 'application/json'
-   return user_response
+@portfolios.route('/investments', methods=['GET'])
+def get_all_investments():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM investments')
+    row_headers = [x[0] for x in cursor.description]  # Extract the column headers
+    json_data = []
+    all_investments = cursor.fetchall()  # Fetch all rows from the database
+    for investment in all_investments:
+        json_data.append(dict(zip(row_headers, investment)))  # Create a dictionary for each investment row
+    cursor.close()  # Close the cursor
+    return jsonify(json_data), 200
 
 # Add information of a particular investment reflecting the transaction that occurred
 @portfolios.route('/investments', methods=['POST']) 
