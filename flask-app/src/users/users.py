@@ -110,7 +110,7 @@ def get_market_data(assetID):
 
 
 # Get historical data information for a particular asset
-@users.route('/historicaldata/<int:assetID>', methods=['GET'])
+@users.route('/historicaldata/', methods=['GET'])
 def get_historical_data(assetID):
    cursor = db.get_db().cursor()
    cursor.execute('SELECT * FROM historicaldata WHERE assetID = %s', (assetID,))
