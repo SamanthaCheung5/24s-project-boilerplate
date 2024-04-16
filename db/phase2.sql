@@ -155,10 +155,11 @@ CREATE TABLE IF NOT EXISTS retirement_account
 CREATE TABLE IF NOT EXISTS retirement_transaction
 (
    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+   transactionID INTEGER
    account_num INTEGER,
    transaction_type varchar(50),
    amount FLOAT,
-   PRIMARY KEY (timestamp, account_num),
+   PRIMARY KEY (transactionID, account_num),
    CONSTRAINT fk_retirement_transaction
    FOREIGN KEY (account_num) REFERENCES retirement_account(account_num)
        ON UPDATE CASCADE ON DELETE CASCADE
