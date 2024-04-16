@@ -110,16 +110,33 @@ def get_market_data(assetID):
 
 
 # Get historical data information for a particular asset
+
 @users.route('/historicaldata/', methods=['GET'])
+def get_assetID():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT assetID FROM historicaldata')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+@users.route('/historicaldata/<int:assetID>', methods=['GET'])
 def get_historical_data(assetID):
-   cursor = db.get_db().cursor()
-   cursor.execute('SELECT * FROM historicaldata WHERE assetID = %s', (assetID,))
-   row_headers = [x[0] for x in cursor.description]
-   json_data =[]
-   userData = cursor.fetchall()
-   for row in userData:
-       json_data.append(dict(zip(row_headers, row)))
-   user_response = make_response(jsonify(json_data))
-   user_response.status_code = 200
-   user_response.mimetype = 'application/json'
-   return user_response
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM historicaldata WHERE assetID = %s', (assetID,))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
