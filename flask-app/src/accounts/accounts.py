@@ -114,8 +114,8 @@ def get_account_ids():
 
 ########################################################
 # Get information retirement account transaction for an account
-@accounts.route('/retirement_transaction/<int:accountNum>', methods=['GET'])
-def get_retirement_transaction(accountNum):
+@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
+def get_retirement_transaction(account_num):
     cursor = db.get_db().cursor()
     cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s')
     row_headers = [x[0] for x in cursor.description]
