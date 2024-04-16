@@ -1,7 +1,7 @@
 ########################################################
 # portfolios blueprint of endpoints
 ########################################################
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from src import db
 
@@ -21,32 +21,41 @@ def update_portfolio(portfolioID):
         SET investmentID = %s, userID = %s, portfolioType = %s
         WHERE portfolioID = %s
     """
-    cursor.execute(query, (investmentID, userID, portfolioType, portfolioID))
-    db.get_db().commit()
-    
-    response = jsonify({"success": True, "message": "Portfolio updated successfully"}), 200
-    
-    cursor.close()
-    return response
+    try:
+        cursor.execute(query, (investmentID, userID, portfolioType, portfolioID))
+        db.get_db().commit()
+        return jsonify({"success": True, "message": "Portfolio updated successfully"}), 200
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
 
 # Create a new report for a portfolio
 @portfolios.route('/reports', methods=['POST'])  
 def create_report():
-    cursor = db.get_db().cursor()
-    data = request.json
-    portfolioID = data.get('portfolioID')
-    reportcontent = data.get('reportcontent')
-    reportformat = data.get('reportformat')
-    
+    the_data = request.json
+    current_app.logger.info(the_data)
+    portfolio_id = the_data['portfolioID']
+    report_content = the_data['reportcontent']
+    report_format = the_data['reportformat']
     query = """
         INSERT INTO reports (portfolioID, reportcontent, reportformat) 
         VALUES (%s, %s, %s);
     """
-    cursor.execute(query, (portfolioID, reportcontent, reportformat))
-    db.get_db().commit()
-    reportID = cursor.lastrowid
-    cursor.close()
-    return jsonify({"success": True, "reportID": reportID, "message": "Report created successfully"}), 201
+    conn = db.get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, (portfolio_id, report_content, report_format))
+        conn.commit()
+        report_id = cursor.lastrowid
+    except Exception as e:
+        conn.rollback()
+        current_app.logger.error(f"Failed to create report: {e}")
+        return jsonify({"success": False, "message": f"Failed to create report: {e}"}), 500
+    finally:
+        cursor.close()
+
+    current_app.logger.info(f"Report created with ID: {report_id}")
+    return jsonify({"success": True, "reportID": report_id, "message": "Report created successfully"}), 201
 
 # View a performance indicator by its ID
 @portfolios.route('/performance_indicators/<int:indicator_ID>', methods=['GET'])
@@ -90,19 +99,34 @@ def get_investment(investmentID):
 # Add information of a particular investment reflecting the transaction that occurred
 @portfolios.route('/investments', methods=['POST']) 
 def add_investment():
-    cursor = db.get_db().cursor()
-    data = request.json
+    the_data = request.json
+    current_app.logger.info(the_data)
+    risk_level = the_data['risklevel']
+    currency = the_data['currency']
+    current_value = the_data['currentvalue']
+    liquidity_ratio = the_data['liquidityratio']
+    purchase_date = the_data['purchasedate']
+    investment_type = the_data['investmenttype']
+    purchase_price = the_data['purchaseprice']
     query = """
-        INSERT INTO investments (risklevel, currency, currentvalue, liquidityratio, purchasedate, investmenttype, purchaseprice)
+        INSERT INTO investments (risklevel, currency, currentvalue, liquidityratio, purchasedate, investmenttype, purchaseprice) 
         VALUES (%s, %s, %s, %s, %s, %s, %s);
     """
-    cursor.execute(query, (data['risklevel'], data['currency'], data['currentvalue'], 
-                           data['liquidityratio'], data['purchasedate'], data['investmenttype'], 
-                           data['purchaseprice']))
-    db.get_db().commit()
-    cursor.close()
+    current_app.logger.info(query)
+    conn = db.get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, (risk_level, currency, current_value, liquidity_ratio, purchase_date, investment_type, purchase_price))
+        conn.commit()
+        response_message = jsonify({"success": True, "message": "Investment added successfully"}), 201
+    except Exception as e:
+        conn.rollback()
+        current_app.logger.error(f"Failed to add investment: {e}")
+        response_message = jsonify({"success": False, "message": f"Failed to add investment: {e}"}), 500
+    finally:
+        cursor.close()
 
-    return jsonify({"success": True, "message": "Investment added successfully"}), 201
+    return response_message
 
 # Delete investment data for a particular InvestmentID
 @portfolios.route('/investments/<int:investmentID>', methods=['DELETE'])
@@ -147,8 +171,10 @@ def update_transaction(transactionID):
         SET Amount = %s, Date = %s, Type = %s
         WHERE TransactionID = %s;
     """
-    cursor.execute(update_query, (amount, date, type, transactionID))
-    db.get_db().commit()
-    cursor.close()
-
-    return jsonify({"success": True, "message": "Transaction updated successfully"}), 200
+    try:
+        cursor.execute(query, (amount, date, type, transactionID))
+        db.get_db().commit()
+        return jsonify({"success": True, "message": "Transactions updated successfully"}), 200
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
