@@ -34,6 +34,8 @@ def add_new_retirement_transaction(account_num):
 
     return 'Success!'
 
+########################################################
+
 # Get information retirement account transaction for an account
 @accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
 def get_retirement_transaction_info(account_num):
@@ -172,3 +174,19 @@ def get_accounts(userID):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# Get accountNum from transaction 
+@accounts.route('/accounts', methods=['GET'])
+def get_accounts_ids():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT accountNum FROM trades')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response    
