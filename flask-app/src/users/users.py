@@ -58,16 +58,15 @@ def add_user():
 def update_user(userID):
    cursor = db.get_db().cursor()
    data = request.json
-   current_app.logger.info(data)
-   managerID = data['managerID']
-   firstname = data['firstname']
-   lastname = data['lastname']
-   occupation = data['occupation']
-   email = data['email']
+   managerID = data.get('managerID')
+   firstname = data.get('firstname')
+   lastname = data.get('lastname')
+   occupation = data.get('occupation')
+   email = data.get('email')
   
    query = """
        UPDATE users
-       SET managerID = %s, last_name = %s, first_name = %s,
+       SET managerID = %s, lastname = %s, firstname = %s,
            occupation = %s, email = %s
        WHERE userID = %s
    """
