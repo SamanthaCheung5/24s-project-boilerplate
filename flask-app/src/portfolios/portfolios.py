@@ -185,7 +185,7 @@ def update_transaction(transactionID):
         WHERE TransactionID = %s;
     """
     try:
-        cursor.execute(query, (amount, date, type, transactionID))
+        cursor.execute(update_query, (amount, date, type, transactionID))
         db.get_db().commit()
         return jsonify({"success": True, "message": "Transactions updated successfully"}), 200
     except Exception as e:
