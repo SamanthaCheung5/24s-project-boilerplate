@@ -144,7 +144,7 @@ def delete_investment(investmentID):
 
 # Return all transactions for a particular investment
 @portfolios.route('/investment_transaction/<InvestmentID>', methods=['GET']) 
-def get_transactions(InvestmentID):
+def get_investment_transactions(InvestmentID):
    cursor = db.get_db().cursor()
    cursor.execute('SELECT * FROM investment_transaction WHERE InvestmentID = %s', (InvestmentID,))
    row_headers = [x[0] for x in cursor.description]
@@ -159,9 +159,9 @@ def get_transactions(InvestmentID):
 
 # Return all transactions for a particular transaction
 @portfolios.route('/investment_transaction/<int:transactionID>', methods=['GET']) 
-def get_transactions(InvestmentID):
+def get_transactions(transactionID):
    cursor = db.get_db().cursor()
-   cursor.execute('SELECT * FROM investment_transaction WHERE transactionID = %s', (InvestmentID,))
+   cursor.execute('SELECT * FROM investment_transaction WHERE transactionID = %s', (transactionID,))
    row_headers = [x[0] for x in cursor.description]
    json_data =[]
    userData = cursor.fetchall()
