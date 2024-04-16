@@ -223,6 +223,7 @@ CREATE TABLE IF NOT EXISTS trades (
        ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+
 -- insert into managers
 INSERT INTO managers (managerID, email, phone, name)
 VALUES
