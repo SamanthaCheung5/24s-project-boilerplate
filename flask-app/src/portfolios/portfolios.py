@@ -157,7 +157,22 @@ def get_transactions(InvestmentID):
    user_response.mimetype = 'application/json'
    return user_response
 
-# Update transaction information in the system
+# Return all transactions for a particular transaction
+@portfolios.route('/investment_transaction/<int:transactionID>', methods=['GET']) 
+def get_transactions(InvestmentID):
+   cursor = db.get_db().cursor()
+   cursor.execute('SELECT * FROM investment_transaction WHERE transactionID = %s', (InvestmentID,))
+   row_headers = [x[0] for x in cursor.description]
+   json_data =[]
+   userData = cursor.fetchall()
+   for row in userData:
+       json_data.append(dict(zip(row_headers, row)))
+   user_response = make_response(jsonify(json_data))
+   user_response.status_code = 200
+   user_response.mimetype = 'application/json'
+   return user_response
+
+# Update transaction information in the system for a particular investment
 @portfolios.route('/investment_transactions/<int:transactionID>', methods=['PUT'])  
 def update_transaction(transactionID):
     cursor = db.get_db().cursor()
