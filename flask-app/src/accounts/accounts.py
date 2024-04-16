@@ -57,6 +57,21 @@ def update_instrument(instrumentID):
 
 ########################################################
 
+# Return all instrumentz information for a particular Instrument_ID
+@accounts.route('/instruments', methods=['GET'])
+def get_all_instruments():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM instruments')
+    row_headers = [x[0] for x in cursor.description]  
+    json_data = []
+    all_instruments = cursor.fetchall()  
+    for instrument in all_instruments:
+        json_data.append(dict(zip(row_headers, instrument)))  
+    cursor.close()  # Close the cursor
+    return jsonify(json_data), 200
+
+########################################################
+
 # Delete instrument information for a specific instrumentID (DELETE request)
 @accounts.route('/instruments/<int:instrumentID>', methods=['DELETE'])
 def delete_instrument(instrumentID):

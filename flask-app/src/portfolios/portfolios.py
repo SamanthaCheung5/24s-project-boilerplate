@@ -66,7 +66,7 @@ def get_performance_indicator(indicator_ID):
     """
     cursor.execute(query, (indicator_ID,))
     row_headers = [x[0] for x in cursor.description]
-    result = cursor.fetchall()  # Changed from fetchone to fetchall to get a list of results
+    result = cursor.fetchall() 
     cursor.close()
 
     json_data = []
@@ -74,7 +74,7 @@ def get_performance_indicator(indicator_ID):
         json_data.append(dict(zip(row_headers, row)))
 
     if json_data:
-        response = make_response(jsonify(json_data), 200)  # Sends a list of dictionaries
+        response = make_response(jsonify(json_data), 200)  
     else:
         response = make_response(jsonify({"error": "Performance indicator not found"}), 404)
 
@@ -86,12 +86,12 @@ def get_performance_indicator(indicator_ID):
 def get_all_investments():
     cursor = db.get_db().cursor()
     cursor.execute('SELECT * FROM investments')
-    row_headers = [x[0] for x in cursor.description]  # Extract the column headers
+    row_headers = [x[0] for x in cursor.description] 
     json_data = []
-    all_investments = cursor.fetchall()  # Fetch all rows from the database
+    all_investments = cursor.fetchall() 
     for investment in all_investments:
-        json_data.append(dict(zip(row_headers, investment)))  # Create a dictionary for each investment row
-    cursor.close()  # Close the cursor
+        json_data.append(dict(zip(row_headers, investment))) 
+    cursor.close()  
     return jsonify(json_data), 200
 
 # Add information of a particular investment reflecting the transaction that occurred
