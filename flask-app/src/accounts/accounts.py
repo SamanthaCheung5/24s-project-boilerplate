@@ -124,23 +124,6 @@ def get_retirement_transaction(account_num):
     user_response.mimetype = 'application/json'
     return user_response
 
-########################################################
-# Get information retirement account transaction for an account
-@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
-def get_retirement_transaction(account_num):
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s', (account_num,))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    userData = cursor.fetchall()
-    for row in userData:
-        json_data.append(dict(zip(row_headers, row)))
-
-    user_response = make_response(jsonify(json_data))
-    user_response.status_code = 200
-    user_response.mimetype = 'application/json'
-    return user_response
-
 # Add information of a trade that took place, reflecting the transaction that occurred
 @accounts.route('/trades', methods=['POST'])
 def add_new_trade():
