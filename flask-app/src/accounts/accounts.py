@@ -114,7 +114,7 @@ def get_account_ids():
 
 ########################################################
 # Get information retirement account transaction for an account
-@accounts.route('/retirement_transaction/<int:accountNum>', methods=['GET'])
+@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
 def get_retirement_transaction_info():
     cursor = db.get_db().cursor()
     cursor.execute('SELECT * FROM retirement_transaction WHERE account_num = %s')
