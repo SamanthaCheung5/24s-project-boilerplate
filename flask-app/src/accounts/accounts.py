@@ -113,6 +113,23 @@ def get_account_ids():
     return user_response
 
 ########################################################
+# Get information retirement account transaction for an account
+@accounts.route('/retirement_transaction/<int:accountNum>', methods=['GET'])
+def get_retirement_transaction_info():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM retirement_transaction WHERE account_num = %s')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
 
 # Add information of a trade that took place, reflecting the transaction that occurred
 @accounts.route('/trades', methods=['POST'])
