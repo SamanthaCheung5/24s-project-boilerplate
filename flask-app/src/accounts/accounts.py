@@ -142,7 +142,7 @@ def add_new_trade():
     buy_or_sell = the_data['Buy_or_Sell']
 
     # Constructing the query for adding a new trade
-    query = 'INSERT INTO trades (TradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell, TradeID) VALUES ({}, {}, "{}", {}, {}, {}, {}, {})'.format(
+    query = 'INSERT INTO trades (TradeID, Account_Number, TradeDate, Number_of_Shares, Price_per_Share, Total_Amount, InstrumentID, Buy_or_Sell) VALUES ({}, {}, "{}", {}, {}, {}, {}, {})'.format(
         tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell)
     current_app.logger.info(query)
 
