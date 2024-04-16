@@ -91,7 +91,7 @@ def get_investment(investmentID):
    userData = cursor.fetchall()
    for row in userData:
        json_data.append(dict(zip(row_headers, row)))
-   user_response = make_response(jsonify(json_data))
+   user_response = make_response(jsonify(json_data[0]))
    user_response.status_code = 200
    user_response.mimetype = 'application/json'
    return user_response

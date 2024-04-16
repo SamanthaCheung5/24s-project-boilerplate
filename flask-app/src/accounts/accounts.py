@@ -60,6 +60,20 @@ def update_instrument(instrumentID):
 
     return 'Instrument information updated successfully!'
 
+# Get instrument information for a specific instrumentID (GET)
+@accounts.route('/instruments/<int:instrumentID>', methods=['GET'])
+def get_instruments(instrumentID):
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM accounts WHERE userID = %s', (userID,))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
 ########################################################
 
 # Delete instrument information for a specific instrumentID (DELETE request)
