@@ -171,7 +171,7 @@ def get_transactions(transactionID):
    return user_response
 
 # Update transaction information in the system for a particular investment
-@portfolios.route('/investment_transactions/<int:transactionID>', methods=['PUT'])  
+@portfolios.route('/investment_transaction/<int:transactionID>', methods=['PUT'])  
 def update_transaction(transactionID):
     cursor = db.get_db().cursor()
     data = request.json

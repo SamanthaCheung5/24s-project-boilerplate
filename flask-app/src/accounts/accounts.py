@@ -3,7 +3,7 @@
 ########################################################
 from flask import Blueprint, request, jsonify, current_app, make_response 
 import json
-from src import db
+from src import db 
 
 
 accounts = Blueprint('accounts', __name__)
@@ -36,24 +36,6 @@ def add_new_retirement_transaction(account_num):
 
 ########################################################
 
-# Get information retirement account transaction for an account
-@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
-def get_retirement_transaction_info(account_num):
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM retirement_transaction WHERE account_num = %s', (account_num,))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    userData = cursor.fetchall()
-    for row in userData:
-        json_data.append(dict(zip(row_headers, row)))
-
-    user_response = make_response(jsonify(json_data))
-    user_response.status_code = 200
-    user_response.mimetype = 'application/json'
-    return user_response
-
-########################################################
-
 # Update instrument information for a specific instrumentID (PUT request)
 @accounts.route('/instruments/<int:instrumentID>', methods=['PUT'])
 def update_instrument(instrumentID):
@@ -78,33 +60,21 @@ def update_instrument(instrumentID):
 
     return 'Instrument information updated successfully!'
 
-# Get instrument information for a specific instrumentID (GET)
-@accounts.route('/instruments', methods=['GET'])
-def get_all_instruments():
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM instruments')
-    row_headers = [x[0] for x in cursor.description]  # Extract the column headers
-    json_data = []
-    all_instruments = cursor.fetchall()  # Fetch all rows from the database
-    for instruments in all_instruments:
-        json_data.append(dict(zip(row_headers, instruments)))  # Create a dictionary for each investment row
-    cursor.close()  # Close the cursor
-    return jsonify(json_data), 200
 ########################################################
 
 # Delete instrument information for a specific instrumentID (DELETE request)
-@accounts.route('/instruments/<int:instrument_ID>', methods=['DELETE'])
-def delete_instruments(instrument_ID):
-    cursor = db.get_db().cursor()
-    cursor.execute("DELETE FROM instruments WHERE instrument_ID = %s;", (instrument_ID,))
-    db.get_db().commit()
-    deleted_rows = cursor.rowcount
-    cursor.close()
+@accounts.route('/instruments/<int:instrumentID>', methods=['DELETE'])
+def delete_instrument(instrumentID):
+    # Constructing the query for deleting instrument information
+    query = 'DELETE FROM instruments WHERE instrument_ID = {}'.format(instrumentID)
+    current_app.logger.info(query)
 
-    if deleted_rows:
-        return jsonify({"success": True, "message": "Instrument deleted successfully"}), 200
-    else:
-        return jsonify({"error": "Instrument not found"}), 404
+    # Executing and committing the delete statement
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+
+    return 'Instrument information deleted successfully!'
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -120,6 +90,40 @@ def get_trades(accountNum):
     userData = cursor.fetchall()
     for row in userData:
         json_data.append(dict(zip(row_headers, row)))
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
+# Get a list of all accountID numbers
+@accounts.route('/accounts', methods=['GET'])
+def get_account_ids():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT accountNum FROM trades')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
+# Get information retirement account transaction for an account
+@accounts.route('/retirement_transaction/<int:accountNum>', methods=['GET'])
+def get_retirement_transaction_info():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM retirement_transaction WHERE account_num = %s')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
     user_response = make_response(jsonify(json_data))
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
@@ -174,19 +178,3 @@ def get_accounts(userID):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# Get accountNum from transaction 
-@accounts.route('/accounts', methods=['GET'])
-def get_accounts_ids():
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT DISTINCT accountNum FROM trades')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    userData = cursor.fetchall()
-    for row in userData:
-        json_data.append(dict(zip(row_headers, row)))
-
-    user_response = make_response(jsonify(json_data))
-    user_response.status_code = 200
-    user_response.mimetype = 'application/json'
-    return user_response    
