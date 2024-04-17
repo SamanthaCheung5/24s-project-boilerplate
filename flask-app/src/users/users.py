@@ -7,7 +7,8 @@ from src import db
 users = Blueprint('users', __name__)
 
 
-# Get user information for a particular user
+
+# Get user information for particular user in an array
 @users.route('/users/<int:userID>', methods=['GET'])
 def get_id(userID):
    cursor = db.get_db().cursor()
@@ -17,10 +18,11 @@ def get_id(userID):
    userData = cursor.fetchall()
    for row in userData:
        json_data.append(dict(zip(row_headers, row)))
-   user_response = make_response(jsonify(json_data[0]))
+   user_response = make_response(jsonify(json_data))
    user_response.status_code = 200
    user_response.mimetype = 'application/json'
    return user_response
+
 
 
 # Add a new user into the database
