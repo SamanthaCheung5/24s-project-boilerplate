@@ -140,7 +140,7 @@ def get_account_ids():
 @accounts.route('/retirement_account/<int:account_num>', methods=['GET'])
 def get_retirement_account(account_num):
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT userID, account_type, cash_balance, contribution_limit, total_limit FROM retirement_account WHERE account_num = %s', (account_num,))
+    cursor.execute('SELECT * FROM retirement_account WHERE account_num = %s', (account_num,))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
