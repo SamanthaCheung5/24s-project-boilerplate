@@ -163,7 +163,7 @@ def add_new_trade():
 
     # Executing and committing the insert statement
     cursor = db.get_db().cursor()
-    cursor.execute(query)
+    cursor.execute(query, (tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell))
     db.get_db().commit()
 
     return 'Trade information added successfully!'
