@@ -1,5 +1,5 @@
 ########################################################
-# Sample accounts blueprint of endpoints
+# accounts blueprint of endpoints
 ########################################################
 from flask import Blueprint, request, jsonify, current_app, make_response 
 import json
@@ -8,7 +8,7 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
-# add a new source of income
+# Add a new source of income
 @accounts.route('/income', methods=['POST'])
 def add_new_income():
     # Collecting data from the request object
@@ -78,7 +78,7 @@ def update_instrument(instrumentID):
 
 ########################################################
 
-# Return all instruments information for a particular Instrument_ID
+# Return all instruments information
 @accounts.route('/instruments', methods=['GET'])
 def get_all_instruments():
     cursor = db.get_db().cursor()
@@ -93,7 +93,7 @@ def get_all_instruments():
 
 ########################################################
 
-# Delete instrument information for a specific instrumentID (DELETE request)
+# Delete instrument information for a specific instrumentID 
 @accounts.route('/instruments/<int:instrumentID>', methods=['DELETE'])
 def delete_instrument(instrumentID):
     # Constructing the query for deleting instrument information
@@ -144,7 +144,7 @@ def get_account_ids():
     return user_response
 
 ########################################################
-# Get information retirement account for an account
+# Get retirement account information for a specific account
 @accounts.route('/retirement_account/<int:account_num>', methods=['GET'])
 def get_retirement_account(account_num):
     cursor = db.get_db().cursor()
@@ -159,6 +159,8 @@ def get_retirement_account(account_num):
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
+
+########################################################
 
 # Get a list of all accountNum for retirement acc
 @accounts.route('/retirement_account', methods=['GET'])
@@ -175,6 +177,7 @@ def get_account_nums():
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
+########################################################
 
 # Return all account information for a particular user
 @accounts.route('/accounts/<int:userID>', methods=['GET'])
@@ -190,6 +193,7 @@ def get_accounts(userID):
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
+########################################################
 
 if __name__ == '__main__':
     app.run(debug=True)

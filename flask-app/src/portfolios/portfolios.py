@@ -28,8 +28,9 @@ def update_portfolio(portfolioID):
     except Exception as e:
         db.get_db().rollback()
         return jsonify({"success": False, "message": str(e)}), 500
+########################################################
 
-# Create a new report for a portfolio
+# Create a new report
 @portfolios.route('/reports', methods=['POST'])  
 def create_report():
     the_data = request.json
@@ -57,6 +58,8 @@ def create_report():
     current_app.logger.info(f"Report created with ID: {report_id}")
     return jsonify({"success": True, "reportID": report_id, "message": "Report created successfully"}), 201
 
+########################################################
+
 # View a performance indicator by its ID
 @portfolios.route('/performance_indicators/<int:indicator_ID>', methods=['GET'])
 def get_performance_indicator(indicator_ID):
@@ -81,6 +84,8 @@ def get_performance_indicator(indicator_ID):
     response.mimetype = 'application/json'
     return response
 
+########################################################
+
 # Return all investment information for a particular InvestmentID
 @portfolios.route('/investments', methods=['GET'])
 def get_all_investments():
@@ -94,7 +99,9 @@ def get_all_investments():
     cursor.close()  
     return jsonify(json_data), 200
 
-# Add information of a particular investment reflecting the transaction that occurred
+########################################################
+
+# Add a new investment
 @portfolios.route('/investments', methods=['POST']) 
 def add_investment():
     the_data = request.json
@@ -126,6 +133,8 @@ def add_investment():
 
     return response_message
 
+########################################################
+
 # Delete investment data for a particular InvestmentID
 @portfolios.route('/investments/<int:investmentID>', methods=['DELETE'])
 def delete_investment(investmentID):
@@ -139,6 +148,8 @@ def delete_investment(investmentID):
         return jsonify({"success": True, "message": "Investment deleted successfully"}), 200
     else:
         return jsonify({"error": "Investment not found"}), 404
+    
+########################################################
 
 # Return all transactions for a particular investment
 @portfolios.route('/investment_transaction/<InvestmentID>', methods=['GET']) 
@@ -154,6 +165,8 @@ def get_investment_transactions(InvestmentID):
    user_response.status_code = 200
    user_response.mimetype = 'application/json'
    return user_response
+
+########################################################
 
 # Get a list of all transaction ids
 @portfolios.route('/investment_transaction', methods=['GET'])
@@ -171,6 +184,8 @@ def get_transactionid():
     user_response.mimetype = 'application/json'
     return user_response
 
+########################################################
+
 # Return all transactions for a particular transaction
 @portfolios.route('/investment_transaction/<int:transactionID>', methods=['GET']) 
 def get_transactions(transactionID):
@@ -185,6 +200,8 @@ def get_transactions(transactionID):
    user_response.status_code = 200
    user_response.mimetype = 'application/json'
    return user_response
+
+########################################################
 
 # Update transaction information in the system for a particular investment
 @portfolios.route('/investment_transaction/<int:transactionID>', methods=['PUT'])  
@@ -206,3 +223,4 @@ def update_transaction(transactionID):
     except Exception as e:
         db.get_db().rollback()
         return jsonify({"success": False, "message": str(e)}), 500
+    ########################################################

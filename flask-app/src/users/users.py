@@ -1,3 +1,6 @@
+########################################################
+# users blueprint of endpoints
+########################################################
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from src import db
@@ -5,7 +8,6 @@ from src import db
 
 # Create a blueprint for users
 users = Blueprint('users', __name__)
-
 
 
 # Get user information for particular user in an array
@@ -23,7 +25,7 @@ def get_id(userID):
    user_response.mimetype = 'application/json'
    return user_response
 
-
+########################################################
 
 # Add a new user into the database
 @users.route('/users', methods=['POST'])
@@ -54,6 +56,8 @@ def add_user():
   
    return 'Successfully added new user!'
 
+########################################################
+
 
 # Update user information into the database
 @users.route('/users/<int:userID>', methods=['PUT'])
@@ -79,6 +83,8 @@ def update_user(userID):
    except Exception as e:
        db.get_db().rollback()
        return jsonify({"success": False, "message": str(e)}), 500
+   
+   ########################################################
   
 # Delete user information for a particular user
 @users.route('/users/<int:userID>', methods=['DELETE'])
@@ -92,6 +98,8 @@ def delete_user(userID):
 
 
    return 'Instrument information deleted successfully!'
+
+########################################################
 
 # Get distinct assetIDs from historical data
 @users.route('/historicaldata/', methods=['GET'])
@@ -109,6 +117,8 @@ def get_assetID():
     user_response.mimetype = 'application/json'
     return user_response
 
+########################################################
+
 # Get historical data information for a particular asset
 @users.route('/historicaldata/<int:assetID>', methods=['GET'])
 def get_historical_data(assetID):
@@ -124,3 +134,5 @@ def get_historical_data(assetID):
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
+
+########################################################
