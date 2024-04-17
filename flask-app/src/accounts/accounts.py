@@ -8,7 +8,7 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
-# add new retirement account
+# add a new source of income
 @accounts.route('/income', methods=['POST'])
 def add_new_income():
     # Collecting data from the request object
