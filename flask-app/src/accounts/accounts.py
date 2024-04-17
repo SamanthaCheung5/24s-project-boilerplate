@@ -164,7 +164,7 @@ def get_retirement_account(account_num):
 @accounts.route('/retirement_account', methods=['GET'])
 def get_account_nums():
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT DISTINCT accountNum FROM retirement_account')
+    cursor.execute('SELECT DISTINCT account_num FROM retirement_account')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
