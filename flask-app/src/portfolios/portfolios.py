@@ -175,8 +175,8 @@ def get_transactions(transactionID):
 def update_transaction(transactionID):
     cursor = db.get_db().cursor()
     data = request.json
-    amount = data.get('amount')
-    type = data.get('type')
+    amount = data.get('Amount')
+    type = data.get('Type')
 
     update_query = """
         UPDATE investment_transaction
