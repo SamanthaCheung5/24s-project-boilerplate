@@ -9,25 +9,31 @@ from src import db
 accounts = Blueprint('accounts', __name__)
 
 # Add a new retirement account for a specific user
-@accounts.route('/users/<int:user_id>/retirement_account', methods=['POST'])
-def add_new_retirement_account(user_id):
+@accounts.route('/retirement_account', methods=['POST'])
+def add_new_retirement_account():
     # Collecting data from the request object
     the_data = request.json
     current_app.logger.info(the_data)
 
     # Extracting the variables
+    user_id = the_data['user_id']
     account_type = the_data['account_type']
-    cash_balance = float(the_data['cash_balance'])  # Convert to float
-    contribution_limit = float(the_data['contribution_limit'])  # Convert to float
-    total_limit = float(the_data['total_limit'])  # Convert to float
+    cash_balance = the_data['cash_balance']
+    contribution_limit = the_data['contribution_limit']
+    total_limit = the_data['total_limit']
 
-    # Constructing the query with placeholders
-    query = 'INSERT INTO retirement_account (userID, account_type, cash_balance, contribution_limit, total_limit) VALUES (%s, %s, %s, %s, %s)'
+    # Constructing the query
+    query = 'INSERT INTO retirement_account (userID, account_type, cash_balance, contribution_limit, total_limit) VALUES ("'
+    query += str(user_id) + '", "'
+    query += account_type + '", '
+    query += str(cash_balance) + ', '
+    query += str(contribution_limit) + ', '
+    query += str(total_limit) + ')'
     current_app.logger.info(query)
 
-    # Executing and committing the insert statement with parameters
+    # Executing and committing the insert statement
     cursor = db.get_db().cursor()
-    cursor.execute(query, (user_id, account_type, cash_balance, contribution_limit, total_limit))
+    cursor.execute(query)
     db.get_db().commit()
 
     return 'Success!'
