@@ -157,14 +157,14 @@ def add_new_trade():
     buy_or_sell = the_data['Buy_or_Sell']
 
     # Constructing the query for adding a new trade
-    query = 'INSERT INTO trades (TradeID, Account_Number, TradeDate, Number_of_Shares, Price_per_Share, Total_Amount, InstrumentID, Buy_or_Sell) VALUES ({}, {}, "{}", {}, {}, {}, {}, {})'.format(
-        tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell)
-    current_app.logger.info(query)
-
+    query = 'INSERT INTO trades (TradeID, Account_Number, TradeDate, Number_of_Shares, Price_per_Share, Total_Amount, InstrumentID, Buy_or_Sell) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    
     # Executing and committing the insert statement
     cursor = db.get_db().cursor()
     cursor.execute(query, (tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell))
     db.get_db().commit()
+
+    return 'Trade information added successfully!'
 
     return 'Trade information added successfully!'
 
