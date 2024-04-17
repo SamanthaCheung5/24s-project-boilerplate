@@ -8,6 +8,22 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
+# Get information for income 
+@accounts.route('/income/<int:IncomeID>', methods=['GET'])
+def get_income_info(IncomeID):
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM income WHERE IncomeID = %s', (IncomeID,))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
 # add new retirement account
 @accounts.route('/income', methods=['POST'])
 def add_new_income():
@@ -184,8 +200,6 @@ def add_new_trade():
     cursor = db.get_db().cursor()
     cursor.execute(query, (tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell))
     db.get_db().commit()
-
-    return 'Trade information added successfully!'
 
     return 'Trade information added successfully!'
 
