@@ -8,22 +8,6 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
-# Get information for income 
-@accounts.route('/income/<int:IncomeID>', methods=['GET'])
-def get_income_info(IncomeID):
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM income WHERE IncomeID = %s', (IncomeID,))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    userData = cursor.fetchall()
-    for row in userData:
-        json_data.append(dict(zip(row_headers, row)))
-
-    user_response = make_response(jsonify(json_data))
-    user_response.status_code = 200
-    user_response.mimetype = 'application/json'
-    return user_response
-
 # add new retirement account
 @accounts.route('/income', methods=['POST'])
 def add_new_income():
@@ -184,14 +168,14 @@ def add_new_trade():
     current_app.logger.info(the_data)
 
     # Extracting the variables
-    tradeID = the_data['TradeID']
-    accountNum = the_data['Account_Number']
-    date = the_data['TradeDate']
-    number_of_shares = the_data['Number_of_Shares']
-    price_per_share = the_data['Price_per_Share']
-    total_amount = the_data['Total_Amount']
-    instrumentID = the_data['InstrumentID']
-    buy_or_sell = the_data['Buy_or_Sell']
+    tradeID = the_data['Trade ID']
+    accountNum = the_data['Account Num']
+    date = the_data['Date']
+    number_of_shares = the_data['Number Of Shares']
+    price_per_share = the_data['Price Per Share']
+    total_amount = the_data['Total Amount']
+    instrumentID = the_data['Instrument ID']
+    buy_or_sell = the_data['Buy Or Sell']
 
     # Constructing the query for adding a new trade
     query = 'INSERT INTO trades (TradeID, Account_Number, TradeDate, Number_of_Shares, Price_per_Share, Total_Amount, InstrumentID, Buy_or_Sell) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
