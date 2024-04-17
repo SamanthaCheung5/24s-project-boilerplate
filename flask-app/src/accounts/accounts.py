@@ -16,15 +16,15 @@ def add_new_income():
     current_app.logger.info(the_data)
 
     # Extracting the variables
-    income_type = the_data['income_type']
-    amount = the_data['amount']
-    description = the_data['description']
+    Type = the_data['Type']
+    Amount = the_data['Amount']
+    Description = the_data['Description']
 
     # Constructing the query
     query = 'INSERT INTO income (Type, Amount, Description) VALUES ("'
-    query += income_type + '", '
-    query += str(amount) + ', "'
-    query += description + '")'
+    query += Type + '", '
+    query += str(Amount) + ', "'
+    query += Description + '")'
     current_app.logger.info(query)
 
     # Executing and committing the insert statement
@@ -35,7 +35,23 @@ def add_new_income():
     return 'Success!'
 
 ########################################################
+# Get info for income
+@accounts.route('/income', methods=['GET'])
+def get_all_income_info():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM income')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
 
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+########################################################
 # Update instrument information for a specific instrumentID (PUT request)
 @accounts.route('/instruments/<int:instrumentID>', methods=['PUT'])
 def update_instrument(instrumentID):
