@@ -176,16 +176,15 @@ def update_transaction(transactionID):
     cursor = db.get_db().cursor()
     data = request.json
     amount = data.get('amount')
-    date = data.get('date')
     type = data.get('type')
 
     update_query = """
         UPDATE investment_transaction
-        SET Amount = %s, Date = %s, Type = %s
+        SET Amount = %s, Type = %s
         WHERE TransactionID = %s;
     """
     try:
-        cursor.execute(update_query, (amount, date, type, transactionID))
+        cursor.execute(update_query, (amount, type, transactionID))
         db.get_db().commit()
         return jsonify({"success": True, "message": "Transactions updated successfully"}), 200
     except Exception as e:
