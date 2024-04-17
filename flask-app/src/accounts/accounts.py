@@ -13,6 +13,7 @@ accounts = Blueprint('accounts', __name__)
 def add_new_retirement_account():
     # Collecting data from the request object
     the_data = request.json
+    current_app.logger.info(the_data)
 
     # Extracting the variables
     user_id = the_data['user_id']
@@ -22,7 +23,12 @@ def add_new_retirement_account():
     total_limit = the_data['total_limit']
 
     # Constructing the query with placeholders
-    query = 'INSERT INTO retirement_account (userID, account_type, cash_balance, contribution_limit, total_limit) VALUES (%s, %s, %s, %s, %s)'
+    query = 'INSERT INTO retirement_account (userID, account_type, cash_balance, contribution_limit, total_limit) VALUES ('
+    query += str(user_id) + ', "'
+    query += account_type + '", '
+    query += str(cash_balance) + ', '
+    query += str(contribution_limit) + ', '
+    query += str(total_limit) + ')'
 
     # Executing and committing the insert statement with parameters
     cursor = db.get_db().cursor()
