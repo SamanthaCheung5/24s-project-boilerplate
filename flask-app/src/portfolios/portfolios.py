@@ -155,6 +155,22 @@ def get_investment_transactions(InvestmentID):
    user_response.mimetype = 'application/json'
    return user_response
 
+# Get a list of all transaction ids
+@portfolios.route('/investment_transaction', methods=['GET'])
+def get_transactionid():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT TransactionID FROM investment_transaction')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
 # Return all transactions for a particular transaction
 @portfolios.route('/investment_transaction/<int:transactionID>', methods=['GET']) 
 def get_transactions(transactionID):
