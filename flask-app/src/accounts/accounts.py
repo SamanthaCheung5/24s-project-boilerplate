@@ -78,7 +78,7 @@ def update_instrument(instrumentID):
 
 ########################################################
 
-# Return all instrumentz information for a particular Instrument_ID
+# Return all instruments information for a particular Instrument_ID
 @accounts.route('/instruments', methods=['GET'])
 def get_all_instruments():
     cursor = db.get_db().cursor()
@@ -191,35 +191,6 @@ def get_trade_header():
     user_response.status_code = 200
     user_response.mimetype = 'application/json'
     return user_response
-
-# Add information of a trade that took place, reflecting the transaction that occurred
-@accounts.route('/trades', methods=['POST'])
-def add_new_trade():
-    # Collecting data from the request object
-    the_data = request.json
-    current_app.logger.info(the_data)
-
-    # Extracting the variables
-    tradeID = the_data['Trade ID']
-    accountNum = the_data['Account Num']
-    date = the_data['Date']
-    number_of_shares = the_data['Number Of Shares']
-    price_per_share = the_data['Price Per Share']
-    total_amount = the_data['Total Amount']
-    instrumentID = the_data['Instrument ID']
-    buy_or_sell = the_data['Buy Or Sell']
-
-    # Constructing the query for adding a new trade
-    query = 'INSERT INTO trades (TradeID, Account_Number, TradeDate, Number_of_Shares, Price_per_Share, Total_Amount, InstrumentID, Buy_or_Sell) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-    
-    # Executing and committing the insert statement
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (tradeID, accountNum, date, number_of_shares, price_per_share, total_amount, instrumentID, buy_or_sell))
-    db.get_db().commit()
-
-    return 'Trade information added successfully!'
-
-########################################################
 
 # Return all account information for a particular user
 @accounts.route('/accounts/<int:userID>', methods=['GET'])

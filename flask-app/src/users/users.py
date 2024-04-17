@@ -91,25 +91,7 @@ def delete_user(userID):
 
    return 'Instrument information deleted successfully!'
 
-
-# Get market data information for a particular asset
-@users.route('/marketdata/<int:assetID>', methods=['GET'])
-def get_market_data(assetID):
-   cursor = db.get_db().cursor()
-   cursor.execute('SELECT * FROM marketdata WHERE assetID = %s', (assetID,))
-   row_headers = [x[0] for x in cursor.description]
-   json_data =[]
-   userData = cursor.fetchall()
-   for row in userData:
-       json_data.append(dict(zip(row_headers, row)))
-   user_response = make_response(jsonify(json_data))
-   user_response.status_code = 200
-   user_response.mimetype = 'application/json'
-   return user_response
-
-
-# Get historical data information for a particular asset
-
+# Get distinct assetIDs from historical data
 @users.route('/historicaldata/', methods=['GET'])
 def get_assetID():
     cursor = db.get_db().cursor()
@@ -125,6 +107,7 @@ def get_assetID():
     user_response.mimetype = 'application/json'
     return user_response
 
+# Get historical data information for a particular asset
 @users.route('/historicaldata/<int:assetID>', methods=['GET'])
 def get_historical_data(assetID):
     cursor = db.get_db().cursor()
