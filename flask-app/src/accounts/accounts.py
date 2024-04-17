@@ -144,11 +144,27 @@ def get_account_ids():
     return user_response
 
 ########################################################
-# Get information retirement account transaction for an account
+# Get information retirement account for an account
 @accounts.route('/retirement_account/<int:account_num>', methods=['GET'])
 def get_retirement_account(account_num):
     cursor = db.get_db().cursor()
     cursor.execute('SELECT * FROM retirement_account WHERE account_num = %s', (account_num,))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    userData = cursor.fetchall()
+    for row in userData:
+        json_data.append(dict(zip(row_headers, row)))
+
+    user_response = make_response(jsonify(json_data))
+    user_response.status_code = 200
+    user_response.mimetype = 'application/json'
+    return user_response
+
+# Get a list of all accountNum for retirement acc
+@accounts.route('/retirement_account', methods=['GET'])
+def get_account_nums():
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT DISTINCT accountNum FROM retirement_account')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
