@@ -81,4 +81,5 @@ Our Docker environment consists of three main services defined in the docker-com
 4. Alex Choi
 
 ## VIDEO DEMO
+[Check out our video demo!](https://drive.google.com/file/d/1vMaKv8nz6zRZ0nFarntGyMGCm0hPSsH_/view?usp=sharing)
 
