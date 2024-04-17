@@ -80,3 +80,5 @@ Our Docker environment consists of three main services defined in the docker-com
 3. Samantha Cheung
 4. Alex Choi
 
+## VIDEO DEMO
+
