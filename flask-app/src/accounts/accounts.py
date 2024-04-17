@@ -8,39 +8,31 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
-# Add a new retirement account for a specific user
-@accounts.route('/retirement_account', methods=['POST'])
-def add_retirement_account():
-    # Extract data from the request
-    data = request.json
-    
-    # Check if all required fields are present
-    required_fields = ['account_num', 'userID', 'account_type', 'cash_balance', 'contribution_limit', 'total_limit']
-    for field in required_fields:
-        if field not in data:
-            return jsonify({'error': f'Missing required field: {field}'}), 400
-    
-    # Extract data from the request
-    account_num = data['account_num']
-    userID = data['userID']
-    account_type = data['account_type']
-    cash_balance = data['cash_balance']
-    contribution_limit = data['contribution_limit']
-    total_limit = data['total_limit']
-    
-    # Check if the provided userID exists in the users table
+# add new retirement account
+@income.route('/income', methods=['POST'])
+def add_new_income():
+    # Collecting data from the request object
+    the_data = request.json
+    current_app.logger.info(the_data)
+
+    # Extracting the variables
+    income_type = the_data['income_type']
+    amount = the_data['amount']
+    description = the_data['description']
+
+    # Constructing the query
+    query = 'INSERT INTO income (Type, Amount, Description) VALUES ("'
+    query += income_type + '", '
+    query += str(amount) + ', "'
+    query += description + '")'
+    current_app.logger.info(query)
+
+    # Executing and committing the insert statement
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT userID FROM users WHERE userID = %s', (userID,))
-    user = cursor.fetchone()
-    if not user:
-        return jsonify({'error': f'User with userID {userID} does not exist'}), 404
-    
-    # Insert the new account into the retirement_account table
-    cursor.execute('INSERT INTO retirement_account (account_num, userID, account_type, cash_balance, contribution_limit, total_limit) VALUES (%s, %s, %s, %s, %s, %s)', 
-                   (account_num, userID, account_type, cash_balance, contribution_limit, total_limit))
+    cursor.execute(query)
     db.get_db().commit()
-    
-    return jsonify({'message': 'Account added successfully'}), 201
+
+    return 'Success!'
 
 ########################################################
 
