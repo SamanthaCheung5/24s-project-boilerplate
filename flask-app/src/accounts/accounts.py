@@ -8,23 +8,25 @@ from src import db
 
 accounts = Blueprint('accounts', __name__)
 
-# add a new retirement transaction 
-@accounts.route('/retirement_transaction/<int:account_num>', methods=['POST'])
-def add_new_retirement_transaction(account_num):
-
+# Add a new retirement account
+@accounts.route('/retirement_account', methods=['POST'])
+def add_new_retirement_account():
     # Collecting data from the request object
     the_data = request.json
 
     # Extracting the variables
-    transaction_type = the_data['transaction_type']
-    amount = the_data['amount']
+    user_id = the_data['user_id']
+    account_type = the_data['account_type']
+    cash_balance = the_data['cash_balance']
+    contribution_limit = the_data['contribution_limit']
+    total_limit = the_data['total_limit']
 
     # Constructing the query with placeholders
-    query = 'INSERT INTO retirement_transaction (account_num, transaction_type, amount) VALUES (%s, %s, %s)'
+    query = 'INSERT INTO retirement_account (userID, account_type, cash_balance, contribution_limit, total_limit) VALUES (%s, %s, %s, %s, %s)'
 
     # Executing and committing the insert statement with parameters
     cursor = db.get_db().cursor()
-    cursor.execute(query, (account_num, transaction_type, amount))
+    cursor.execute(query, (user_id, account_type, cash_balance, contribution_limit, total_limit))
     db.get_db().commit()
 
     return 'Success!'
@@ -124,10 +126,10 @@ def get_account_ids():
 
 ########################################################
 # Get information retirement account transaction for an account
-@accounts.route('/retirement_transaction/<int:account_num>', methods=['GET'])
-def get_retirement_transaction(account_num):
+@accounts.route('/retirement_account/<int:account_num>', methods=['GET'])
+def get_retirement_account(account_num):
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT account_num, amount, transaction_type FROM retirement_transaction WHERE account_num = %s', (account_num,))
+    cursor.execute('SELECT * FROM retirement_account WHERE account_num = %s', (account_num,))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     userData = cursor.fetchall()
